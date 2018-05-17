@@ -4,61 +4,43 @@ from discord.ext import commands
 
 
 class administratorModeration:
-	def __init__(self, bot):
-		self.botAdmin = bot
-
-	@commands.command(name = 'warning',
-			description=
-				"Syntax:\n\n ++warning\nENTER ID:\n<IDNumber>\nReason Number:\n<Reason Number>\n\nEx:\n++warning\nENTER ID:\n47293***********3234\nReason Number:\n6"
-				"\n\nYou get the ID Number by:\nLaptop: Right Click on User. Copy ID. Paste. "
-				"\nMobile: Long Hold on User. Scroll Down. Copy ID. Paste."
-				"\n\nSend a private message to the user you want to warn with one of the reasons below:\n"
-				"\n1. Inappropriate Language"
-				"\n2. Trolling"
-				"\n3. Insulting Others"
-				"\n4. Unnecessary Spam (pictures or repeated attempts to send something over)"
-				"\n5. Speaking about unnecessary topics"
-				"\n6. Insulting a Mod/Admin in a non-friendly way"
-				"\n\n7. Other (Must be specified)"
-				"\n\nThe bot then asks you which reason. You reply one of the numbers from above."
-				"\nIf you choose 7, you must type the reason after the bot asks you for the reason.",
-			brief=
-				"Sends a warning in a private message to a particular user",
-			pass_context=True,
-			hidden=True)
 	async def warning(ctx):
 		roles = []
+		bot = client
 
 		for role in ctx.message.author.roles:
 			roles.append(str(role))
 
-		if (!self.checkAdmin(roles)):
+		if (checkAdmin(roles) == 0):
 			#alertMe(reason)
 			return (-1)
 
-		await self.botAdmin.send_message(ctx.message.channel, "```ENTER ID:\n\nDo not @userName```")
-		userToBeWarned = await self.botAdmin.wait_for_message(author=ctx.message.author, channel=ctx.message.channel)
+		await bot.send_message(ctx.message.channel, "```ENTER ID:\n\nDo not @userName```")
+		userToBeWarnedPrim = await bot.wait_for_message(author=ctx.message.author, channel=ctx.message.channel)
+		userToBeWarned = userToBeWarnedPrim.content	
 
-		await self.botAdmin.send_message(ctx.message.channel, "```Reason Number:```")
-		reasonNumber = await self.botAdmin.wait_for_message(author=ctx.message.author, channel=ctx.message.channel)
+		await bot.send_message(ctx.message.channel, "```Reason Number:```")
+		reasonNumber = await bot.wait_for_message(author=ctx.message.author, channel=ctx.message.channel)
 
 		reasonToBeSent = ""
-		if (int(reasonNumber) == 7):
-			await self.botAdmin.send_message(ctx.message.channel, "```Enter Reason:```")
-			reasonToBeSent = await self.botAdmin.wait_for_message(author=ctx.message.author, channel=ctx.message.channel)
+		if (int(reasonNumber.content) == 7):
+			await bot.send_message(ctx.message.channel, "```Enter Reason:```")
+			reasonToBeSentMsg = await bot.wait_for_message(author=ctx.message.author, channel=ctx.message.channel)
+			reasonToBeSent = reasonToBeSentMsg.content
+
 
 		adminServer = client.get_server(ctx.message.server.id)
 		userToBeWarnedID = adminServer.get_member(userToBeWarned)
 
-		reaNum = int(reasonNumber)
+		reaNum = int(reasonNumber.content)
 		strikeCount = 0
-		data = getMemberData(userToBeWarned, serverID)
+		#data = getMemberData(userToBeWarned, serverID)
 
-		if (data != -1):
-			strikeCount = len(data["strikes"])
+		#if (data != -1):
+			#strikeCount = len(data["strikes"])
 
 		embedTitle = "Infraction"
-		embedColour = discord.Colour(red())
+		embedColour = discord.Colour.gold()
 		embedDesc = []
 		embedDesc.append("__**Infraction**__\n")
 		embedDesc.append("This is a Formal Infraction.\nIf you think your infraction is undoubtedly unjustified, please **do not** post about it in a public channel but take it up with an administrator.\n")
@@ -81,14 +63,14 @@ class administratorModeration:
 		try:
 			sendEmbed = discord.Embed(title = embedTitle, description = ''.join(embedDesc), colour = embedColour)
 		except:
-			await self.botAdmin.send_message(ctx.message.channel, "```FAILED ERROR# WARN01```")
+			await bot.send_message(ctx.message.channel, "```FAILED ERROR# WARN01```")
 
-		try:
-			await self.botAdmin.send_message(userToBeWarnedID, sendEmbed)
-		except:
-			await self.botAdmin.send_message(ctx.message.channel, "```FAILED ERROR# WARN02")
+		#try:
+		await bot.send_message(userToBeWarnedID, embed = sendEmbed)
+		#except:
+		#	await bot.send_message(ctx.message.channel, "```FAILED ERROR# WARN02```")
 
-		await self.botAdmin.send_message(ctx.message.channel, "```Warned User:\t"+str(userToBeWarned)+"\nReason Number:\t"+str(reaNum)+"\nReason Sent:\t"+str(reasonToBeSent))
+		#await bot.send_message(ctx.message.channel, "```Warned User:\t"+str(userToBeWarned)+"\nReason Number:\t"+str(reaNum)+"\nReason Sent:\t"+str(reasonToBeSent)+"```")
 
 	def checkAdmin(listOfRoles):
 		for role in listOfRoles:
