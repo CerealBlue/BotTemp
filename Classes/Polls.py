@@ -59,7 +59,7 @@ class polls:
             await botPolls.send_message(ctx.message.channel, "```ABORTED```")
             return (0)
 
-        if (typePoll != 1) && (typePoll != 2):
+        if (typePoll != 1) and (typePoll != 2):
             await botPolls.send_message(ctx.message.channel, "```ENTER EITHER 1 OR 2. ABORTED```")
             return (0)
 
