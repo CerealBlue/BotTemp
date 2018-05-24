@@ -1,128 +1,129 @@
 from datetime import datetime
 from ast import literal_eval as parseData
-
+import os
+from subprocess import run
 
 """
 Documentation:
+Write MemberData as:
+memberID,
+botCalls,
+warnings[],
+strikes[],
 
-Class serversData contains:
-	servers:
-		"name": "Name"
-		"calls": CallsFromThatServer
-		"members":
-			memberID:
-				"messages": totalMessages
-				"warnings":
-					date: [adminID, reasonNumber]
-				"strikes":
-					date: [adminID, reasonNumber]
-				"botCalls":
-					botcallName: NumberOfTimesItWasCalled
-					
+Write ServerData as:
+serverID,
+serverName,
+botcalls
+
 """
-
-class serversData:
-	def __init__(self):
- 		self.servers = {}
-
-	def addServer(self, ID, Name):
-		self.servers[ID] = {}
-		self.servers[ID]["name"] = Name
-		self.servers[ID]["calls"] = 0
-		self.servers[ID]["members"] = {}
-
-	def addMemberToServer(self, serverID, memberID):
-		self.servers[serverID]["members"][memberID] = {}
-		self.servers[serverID]["members"][memberID]["messages"] = 0
-		self.servers[serverID]["members"][memberID]["warnings"] = {}
-		self.servers[serverID]["members"][memberID]["strikes"] = {} 
-		self.servers[serverID]["members"][memberID]["botCalls"] = {}
-
-	def message(self, serverID, memberID):
-		self.servers[serverID]["members"][memberID]["messages"] += 1
-		self.writeDataToFile(self, serverID)
-
-	def addBotCall(self, serverID, memberID, botCall):
-		self.servers[serverID]["calls"] += 1
-
-		try:
-			self.servers[serverID]["members"][memberID]["botCalls"][botCall]  += 1
-		except:
-			self.servers[serverID]["members"][memberID]["botCalls"][botCall]  = 1
-	
-
-	def writeDataToFile(self, serverID):
-		os.remove(self.servers[serverID]["name"]+"_Data_SUBOT")
-		FileObj = open(self.servers[serverID]["name"]+"_Data_SUBOT", 'w')
-		FileObj.write(str(self.servers[serverID]["members"]))
-	
-	def updateServer(self, serverID, directory = None):
-		FileObj = open(directory+self.servers[serverId][]+"_Calls_Data", 'r')
+def getMemberData(memberID, serverID):
+	try:
+		FileObj = open(str(serverID)+"/"+str(memberID), 'r')
 		data = FileObj.read()
 		FileObj.close()
 		parsedData = parseData(data)
-		self.servers[serverID]["members"] = {}
-		self.servers[serverID]["members"] = parsedData
-		return parsedData
-
-	def numberOfCalls(self, serverID):
-		return self.servers[serverID]["calls"]
-
-	def getServersNames(self):
-		servers = []
-		for server in self.servers:
-			servers.append(self.servers[server]["name"])
-
-		return servers
-
-	def getServersID(self):
-		servers = []
-		for server in self.servers:
-			servers.append(server)
-		return 
-
-	def getServerID(self, serverName):
-		for server in self.servers:
-			if (serverName == self.servers[server]["name"]):
-				return server
-
-	def addWarning(self, serverID, adminMemberID, warnedMemberID, reasonNumber):
-		
-		self.servers[serverID]["members"][warnedMemberID]["warnings"][str(datetime.datetime.now().date())] = [adminMemberID, reasonNumber]
-		count = len(self.servers[serverID]["members"][warnedMemberID]["warnings"])
-
-		if (count == 3) or (count == 6) or (count == 9):
-			self.addStrikeBlue(serverID, "BlueCereal", warnedMemberID, 0)
-		
-	def addStrike(self, serverID, adminMemberID, strikedMemberID, reasonNumber):
-		self.servers[serverID]["members"][warnedMemberID]["strikes"][str(datetime.datetime.now().date())] = [adminMemberID, reasonNumber]
-		count = len(self.servers[serverID]["members"][strikedMemberID]["strikes"])
-
-		if (count >= 3):
-			#alertMe(ReasonNumber, strikedMemberID, serverID)
-
-	def returnMisbehavior(self, serverID, memberToCheckID):
-		return (self.servers[serverID]["members"][memberToCheckID]["warnings"], self.servers[serverID]["members"][memberToCheckID]["strikes"])
-
-	def clearMisbehaviour(self, serverID, callerID, serverIDTarget, memberToClearID, clearList):
-		adminFile = open("BlueCereal", 'r')
-		myID = adminFile.readline()
-		myServerID = adminFile.readline()
-		adminFile.close()
-
-		if (serverID == myServerID):
-			if (callerID == myID):
-				for listItem in clearList:
-					self.servers[serverIDTarget]["members"][memberToClearID][listItem] = []
-				return 1
-		#alertMe(ReasonNumber)
+		return Data
+	except:
 		return (-1)
 
-"""self.me = '378555841017544724'"""
-	"""def myId(self):
-		return self.me
+#TO WRITE FOR STRIKES OR WARNINGS
+def writeMemberData(memberID, serverID, warning = None, strike = None):
+	#Check if the file exists:
+	data = getMemberData(memberID, serverID)
+	#FirstLogEntry
+	if (data == (-1)):
+		warningList = []
+		strikeList = []
 
-	def isMe(self, testId):
-		if (self.me == testId):
-			return True
-		return False"""	
+		if (warning != None):
+			warningList.append(warning)
+
+		if (strike != None):
+			strikeList.append(strike)
+
+		newMemberDict = {"memberID" : memberID,
+						"botCalls" : {},
+						"warnings" : warningList,
+						"strikes" : strikeList}
+		FileObjNew = open(str(serverID)+"/"+str(memberID), 'w')
+		FileObjNew.write(str(newMemberDict))
+		FileObj.close()
+		return 1
+	else:
+		warnings = data["warnings"]
+		strikes = data["strikes"]
+		if (warning != None):
+			data["warnings"].append(warning)
+			if ( (len(warning) == 3) or (len(warning) == 6) or (len(warning) == 9) ):
+			#	addStrike(memberID, serverID, adminID = "SuperUserBot", reasonNumber = )
+
+#WHEN A USER USES A BOT CALL
+def addBotCall(memberID, serverID, callName):
+	try:
+		FileObj = open(str(serverID)+"/"+str(memberID), 'r')
+		data = FileObj.read()
+		memberData = parseData(data)
+
+		try:
+			memberData["botCalls"][callName] += 1
+		except:
+			memberData["botCalls"][callName] = 1
+
+		FileObj.close()
+		os.remove(str(serverID)+"/"+str(memberID))
+		FileObjNew = open(str(serverID)+"/"+str(memberID), 'w')
+		FileObjNew.write(str(memberData))
+		FileObjNew.close()
+	except:
+		FileObjNewMember = open(str(serverID)"/"+str(memberID), 'w')
+
+		warningList = []
+		strikeList = []
+
+		newMemberDict = {"memberID" : memberID,
+						"botCalls" : {},
+						"warnings" : warningList,
+						"strikes" : strikeList}
+
+		newMemberDict["botCalls"][callName] = 1
+
+		FileObjNewMember.write(str(newMemberDict))
+
+def setPollChannel(serverID, pollChannelID):
+	try:
+		FileObj = open(str(serverID)+"/"+"MainData", 'r')
+		data = parseData(FileObj.read())
+		data["pollChannelID"] = pollChannelID
+		FileObj.close()
+		os.remove(str(serverID)+"/MainData")
+		FileObjNew = open(str(serverID)+"/MainData", 'w')
+		FileObjNew.write(str(data))
+	except:
+		FileObj = open(str(serverID)+"/MainData", 'w')
+		data = {}
+		data["pollChannelID"] = pollChannelID
+		FileObj.close()
+
+	return 0
+
+def getPollChannel(serverID):
+	try:
+		FileObj = open(str(serverID)+"/MainData", 'r')
+		data = parseData(FileObj.read())
+		try:
+			pollChannelID = data["pollChannelID"]
+			return pollChannelID
+		except:
+			return 0
+	except:
+		return -1
+
+def setAdminBotControlChannel(serverID):
+	run(['mkdir', str(serverID)])
+	FileObj = open(str(serverID)+"/MainData", 'w')
+	data = {}
+	data["adminBotControlChannel"] = str(serverID)
+	FileObj.write(str(data))
+	FileObj.close()
+	return 1

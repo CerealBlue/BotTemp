@@ -24,10 +24,10 @@ client = Bot(command_prefix=BOT_PREFIX)
 """class Lists:
 	def __init__(self):
 		self.idList = []
-	
+
 	def addId(self, Id):
 		self.idList.append(Id)
-	
+
 	def IdList(self, Id):
 		if Id in idList:
 			return 1
@@ -50,10 +50,10 @@ def TrustedPeople:
 		self.users = []
 		with open("TrustedUsers", 'r') as FileObj:
 			self.users.append(FileObj.getline())
-	
+
 	def addUser(self, user):
-		
-		
+
+
 """
 
 
@@ -66,7 +66,7 @@ def TrustedPeople:
 		aliases=['hey','hi','hello', 'sup', 'wassup'],
 		pass_context = True)
 async def greet(context):
-	#suBot.addCall(context.message.server.id)	
+	#suBot.addCall(context.message.server.id)
 	greeters = [
 		"Wassup,",
 	        "Salutations",
@@ -74,7 +74,7 @@ async def greet(context):
 	        "Hello! I stay in a Raspberry Pi! It's doesn't taste like a Pie though :( ...",
 	        "My Creator (The great BlueCereal) has taught me to greet people (I'm anti-social, btw). Here goes... ~~Gretings~~ ~~Greatthings~~ \n\nGreetings,"]
 	await client.say(choice(greeters) + " " + context.message.author.mention + ".")
-	
+
 
 @client.command(name='time',
                 description=
@@ -124,7 +124,7 @@ async def logoutBlue(context):
 			return 0""
 
 		confirmMsg = await client.wait_for_message(timeout = 15, author = context.message.author,channel=me, content='Logout')
-		print (confirmMsg)		
+		print (confirmMsg)
 		""if confirmMsg.content == 'Y':
 			print ('y')
 		else:
@@ -144,13 +144,13 @@ async def logoutBlue(context):
 			"\n\nThe bot then asks you which reason. You reply one of the numbers from above."
 			"\nIf you choose 6, you must type the reason after it asks you for the reason.",
 		brief="Pm a dude",
-		pass_context=True,		
+		pass_context=True,
 		hidden=True)
 async def test(ctx):
 	print (str(ctx.message.author.roles[0]))
 	for i in ctx.message.author.roles:
 		print (str(i))
-	
+
 
 
 @client.command(name='joke',
@@ -162,7 +162,7 @@ async def joke(context):
 	msg = context.message.content
 	subR = "jokes"
 	if "dark" in msg:
-		await client.say("Dark joke, huh? Let's do it") 
+		await client.say("Dark joke, huh? Let's do it")
 		subR = "darkjokes"
 	else:
 		await client.say("Wait for one sec")
@@ -175,15 +175,15 @@ async def joke(context):
 		hidden=True)
 async def callsMade(context):
 	#suBot.addCall(context.message.server.id)
-	
+
 	"""if (suBot.isMe(context.message.author.id)):
 		pingedServ = client.get_server(context.message.server.id)
 		me = pingedServ.get_member(suBot.myId())
 		senderMsg = suBot.returnServerInfo()
 		await client.send_message(me, senderMsg)
-		
-		
-	else: 
+
+
+	else:
 		print ("no")
 """
 @client.command(name='itsshit',
@@ -198,7 +198,7 @@ async def itsshit(context):
 		pass_context=True)
 async def checkat(context):
 	#print (context.message.attachments)
-	print ("Adding image")	
+	print ("Adding image")
 	await client.send_message(context.message.channel, "Send Me a Img")
 	msg = await client.wait_for_message(author=context.message.author, channel=context.message.channel)
 	#print (msg.attachments)
@@ -214,8 +214,8 @@ async def checkat(context):
 		await client.send_file(context.message.channel, "yo/foo.png", filename="foo2.png", content="Yo")
 
 	else:
-		await client.send_messagae(context.message.channel, "I need jpg/png")
-	
+		await client.send_message(context.message.channel, "I need jpg/png")
+
 @client.async_event
 async def on_message(message):
 	chan = message.channel
