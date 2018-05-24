@@ -15,7 +15,6 @@ from classes.Servers import * as serversData
 
 #from mt_b import mt_b_start as memesteal
 
-TOKEN = "NDM0MDI3NzE2Nzk1NDMyOTYx.DcdETQ.rdsieJCA2pCYoz68o481J1BvgXg"
 
 BOT_PREFIX = ("?", "!", "++")
 
